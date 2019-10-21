@@ -67,7 +67,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:text="Rs 10/pic"
-                            android:layout_marginLeft="40dp"
+                            android:layout_marginLeft="20dp"
                             android:textSize="25sp"
                             android:textStyle="bold"
                             android:typeface="serif"
@@ -144,7 +144,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:text="Rs 45/pic"
-                            android:layout_marginLeft="40dp"
+                            android:layout_marginLeft="20dp"
                             android:textSize="25sp"
                             android:textStyle="bold"
                             android:typeface="serif"
@@ -222,7 +222,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:text="Rs 440/pic"
-                            android:layout_marginLeft="40dp"
+                            android:layout_marginLeft="20dp"
                             android:textSize="25sp"
                             android:textStyle="bold"
                             android:typeface="serif"
@@ -301,7 +301,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:text="Rs 165/pic"
-                            android:layout_marginLeft="40dp"
+                            android:layout_marginLeft="20dp"
                             android:textSize="25sp"
                             android:textStyle="bold"
                             android:typeface="serif"
@@ -380,7 +380,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:text="Rs 135/pic"
-                            android:layout_marginLeft="40dp"
+                            android:layout_marginLeft="20dp"
                             android:textSize="25sp"
                             android:textStyle="bold"
                             android:typeface="serif"
@@ -459,7 +459,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:text="Rs 28/pic"
-                            android:layout_marginLeft="40dp"
+                            android:layout_marginLeft="20dp"
                             android:textSize="25sp"
                             android:textStyle="bold"
                             android:typeface="serif"
@@ -538,7 +538,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:text="Rs 25/pic"
-                            android:layout_marginLeft="40dp"
+                            android:layout_marginLeft="20dp"
                             android:textSize="25sp"
                             android:textStyle="bold"
                             android:typeface="serif"
@@ -616,7 +616,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:text="Rs 35/pic"
-                            android:layout_marginLeft="40dp"
+                            android:layout_marginLeft="20dp"
                             android:textSize="25sp"
                             android:textStyle="bold"
                             android:typeface="serif"
