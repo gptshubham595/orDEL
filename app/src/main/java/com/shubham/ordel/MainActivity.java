@@ -1,48 +1,77 @@
 package com.shubham.ordel;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.asksira.loopingviewpager.LoopingViewPager;
 import com.rd.PageIndicatorView;
+import com.shashank.sony.fancytoastlib.FancyToast;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     LoopingViewPager viewPager;
-    String hostel="",room="";
+    public static String hostel="",room="",name="",number="",order="";
     DemoInfiniteAdapter adapter;
     PageIndicatorView indicatorView;
+    Uri imageUri;
     String TAG = "MainActivity";
-    String payeeAddress = "gptshubham595@oksbi";
-    String payeeName = "Shubham Kumar Gupta";
-    String transactionNote = "OrDEL";
+    String payeeAddress = "vanshaj.wore@okaxis";
+    String payeeName = "Vansaj Wore";
+    String transactionNote = "OrDEL: Paid To Vansaj Wore";
     String currencyUnit = "INR";
     EditText samosa, dabeli, cake, chicken, babycorn, frimaggi, maggi,vada;
     TextView samosaadd, dabeliadd, cakeadd, chickenadd, babycornadd, frimaggiadd, maggiadd,vadaadd;
     TextView samosaminus, dabeliminus, cakeminus, chickenminus, babycornminus, frimaggiminus, maggiminus,vadaminus;
+
+    File imagepath;
     private int currentDataSet = 1;
     ImageView cart;
     public static int total=0;
@@ -55,6 +84,14 @@ public class MainActivity extends AppCompatActivity {
         cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int sam=Integer.parseInt(samosa.getText().toString().trim());
+                int dab=Integer.parseInt(dabeli.getText().toString().trim());
+                int ca=Integer.parseInt(cake.getText().toString().trim());
+                int chic=Integer.parseInt(chicken.getText().toString().trim());
+                int baby=Integer.parseInt(babycorn.getText().toString().trim());
+                int fri=Integer.parseInt(frimaggi.getText().toString().trim());
+                int mag=Integer.parseInt(maggi.getText().toString().trim());
+                int va=Integer.parseInt(vada.getText().toString().trim());
 
                 total=Integer.parseInt(samosa.getText().toString().trim())*10
                         +Integer.parseInt(dabeli.getText().toString().trim())*45
@@ -64,12 +101,33 @@ public class MainActivity extends AppCompatActivity {
                         +Integer.parseInt(frimaggi.getText().toString().trim())*28
                         +Integer.parseInt(maggi.getText().toString().trim())*25
                         +Integer.parseInt(vada.getText().toString().trim())*35;
-                Toast.makeText(MainActivity.this,""+ total, Toast.LENGTH_SHORT).show();
+
+                FancyToast.makeText(MainActivity.this,"TOTAL :"+ total,FancyToast.LENGTH_LONG, FancyToast.WARNING,false ).show();
+
 
                 if(total!=0)
-                {showDialog(MainActivity.this);}
+                {order="";
+                    if(sam!=0)
+                    order+="\n SAMOSA "+" Quantity: "+sam;
+                    if(dab!=0)
+                        order+="\n DABELI "+" Quantity: "+dab;
+                    if(ca!=0)
+                        order+="\n CAKE "+" Quantity: "+ca;
+                    if(chic!=0)
+                        order+="\n CHICKEN "+" Quantity: "+chic;
+                    if(baby!=0)
+                        order+="\n BABYCORN "+" Quantity: "+baby;
+                    if(fri!=0)
+                        order+="\n FRIED MAGGI "+" Quantity: "+fri;
+                    if(mag!=0)
+                        order+="\n MAGGI "+" Quantity: "+mag;
+                    if(va!=0)
+                        order+="\n VADA PAO "+" Quantity: "+va;
+
+                    showDialog(MainActivity.this);}
                 else
-                    Toast.makeText(MainActivity.this, "SELECT ATEAST 1", Toast.LENGTH_SHORT).show();
+                    FancyToast.makeText(MainActivity.this,"SELECT ATEAST 1",FancyToast.LENGTH_LONG, FancyToast.ERROR,false ).show();
+
             }
         });
         samosa = findViewById(R.id.samosatotal);
@@ -114,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 int s = Integer.parseInt(vada.getText().toString().trim());
                 s++;
                 if (s > 10) {
-                    Toast.makeText(MainActivity.this, "Sorry Not More than 10", Toast.LENGTH_SHORT).show();
+                    FancyToast.makeText(MainActivity.this, "Sorry Not More than 10", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();
                 } else if (s > 0) {
                     vada.setText("" + s);
                 }
@@ -126,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 int s = Integer.parseInt(samosa.getText().toString().trim());
                 s++;
                 if (s > 10) {
-                    Toast.makeText(MainActivity.this, "Sorry Not More than 10", Toast.LENGTH_SHORT).show();
+                    FancyToast.makeText(MainActivity.this, "Sorry Not More than 10", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();
                 } else if (s > 0) {
                     samosa.setText("" + s);
                 }
@@ -138,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                 int s = Integer.parseInt(dabeli.getText().toString().trim());
                 s++;
                 if (s > 10) {
-                    Toast.makeText(MainActivity.this, "Sorry Not More than 10", Toast.LENGTH_SHORT).show();
+                    FancyToast.makeText(MainActivity.this, "Sorry Not More than 10", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();
                 } else if (s > 0) {
                     dabeli.setText("" + s);
                 }
@@ -150,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 int s = Integer.parseInt(cake.getText().toString().trim());
                 s++;
                 if (s > 10) {
-                    Toast.makeText(MainActivity.this, "Sorry Not More than 10", Toast.LENGTH_SHORT).show();
+                    FancyToast.makeText(MainActivity.this, "Sorry Not More than 10", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();
                 } else if (s > 0) {
                     cake.setText("" + s);
                 }
@@ -162,7 +220,8 @@ public class MainActivity extends AppCompatActivity {
                 int s = Integer.parseInt(chicken.getText().toString().trim());
                 s++;
                 if (s > 10) {
-                    Toast.makeText(MainActivity.this, "Sorry Not More than 10", Toast.LENGTH_SHORT).show();
+                    FancyToast.makeText(MainActivity.this,"Sorry Not More than 10",FancyToast.LENGTH_LONG, FancyToast.ERROR,false ).show();
+                    
                 } else if (s > 0) {
                     chicken.setText("" + s);
                 }
@@ -174,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                 int s = Integer.parseInt(babycorn.getText().toString().trim());
                 s++;
                 if (s > 10) {
-                    Toast.makeText(MainActivity.this, "Sorry Not More than 10", Toast.LENGTH_SHORT).show();
+                    FancyToast.makeText(MainActivity.this, "Sorry Not More than 10", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();
                 } else if (s > 0) {
                     babycorn.setText("" + s);
                 }
@@ -186,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
                 int s = Integer.parseInt(frimaggi.getText().toString().trim());
                 s++;
                 if (s > 10) {
-                    Toast.makeText(MainActivity.this, "Sorry Not More than 10", Toast.LENGTH_SHORT).show();
+                    FancyToast.makeText(MainActivity.this, "Sorry Not More than 10", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();
                 } else if (s > 0) {
                     frimaggi.setText("" + s);
                 }
@@ -198,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                 int s = Integer.parseInt(maggi.getText().toString().trim());
                 s++;
                 if (s > 10) {
-                    Toast.makeText(MainActivity.this, "Sorry Not More than 10", Toast.LENGTH_SHORT).show();
+                    FancyToast.makeText(MainActivity.this, "Sorry Not More than 10", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();
                 } else if (s > 0) {
                     maggi.setText("" + s);
                 }
@@ -212,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 int s=Integer.parseInt(vada.getText().toString().trim());
                 s--;
                 if(s<0){
-                    Toast.makeText(MainActivity.this, "Sorry Not less than 0", Toast.LENGTH_SHORT).show();   vada.setText("0");
+                    FancyToast.makeText(MainActivity.this, "Sorry Not less than 0", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();   vada.setText("0");
                 }else{
                     vada.setText(""+s);
                 }
@@ -224,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 int s=Integer.parseInt(samosa.getText().toString().trim());
                 s--;
                 if(s<0){
-                    Toast.makeText(MainActivity.this, "Sorry Not less than 0", Toast.LENGTH_SHORT).show();   samosa.setText("0");
+                    FancyToast.makeText(MainActivity.this, "Sorry Not less than 0", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();   samosa.setText("0");
                 }else{
                     samosa.setText(""+s);
                 }
@@ -236,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
                 int s=Integer.parseInt(dabeli.getText().toString().trim());
                 s--;
                 if(s<0){
-                    Toast.makeText(MainActivity.this, "Sorry Not less than 0", Toast.LENGTH_SHORT).show();   dabeli.setText("0");
+                    FancyToast.makeText(MainActivity.this, "Sorry Not less than 0", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();   dabeli.setText("0");
                 }else{
                     dabeli.setText(""+s);
                 }
@@ -248,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                 int s=Integer.parseInt(cake.getText().toString().trim());
                 s--;
                 if(s<0){
-                    Toast.makeText(MainActivity.this, "Sorry Not less than 0", Toast.LENGTH_SHORT).show();   cake.setText("0");
+                    FancyToast.makeText(MainActivity.this, "Sorry Not less than 0", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();   cake.setText("0");
                 }else{
                     cake.setText(""+s);
                 }
@@ -260,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
                 int s=Integer.parseInt(chicken.getText().toString().trim());
                 s--;
                 if(s<0){
-                    Toast.makeText(MainActivity.this, "Sorry Not less than 0", Toast.LENGTH_SHORT).show();   chicken.setText("0");
+                    FancyToast.makeText(MainActivity.this, "Sorry Not less than 0", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();   chicken.setText("0");
                 }else {
                     chicken.setText(""+s);
                 }
@@ -272,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
                 int s=Integer.parseInt(babycorn.getText().toString().trim());
                 s--;
                 if(s<0){
-                    Toast.makeText(MainActivity.this, "Sorry Not less than 0", Toast.LENGTH_SHORT).show();   babycorn.setText("0");
+                    FancyToast.makeText(MainActivity.this, "Sorry Not less than 0", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();   babycorn.setText("0");
                 }else {
                     babycorn.setText(""+s);
                 }
@@ -284,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
                 int s=Integer.parseInt(frimaggi.getText().toString().trim());
                 s--;
                 if(s<0){
-                    Toast.makeText(MainActivity.this, "Sorry Not less than 0", Toast.LENGTH_SHORT).show();   frimaggi.setText("0");
+                    FancyToast.makeText(MainActivity.this, "Sorry Not less than 0", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();   frimaggi.setText("0");
                 }else {
                     frimaggi.setText(""+s);
                 }
@@ -296,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
                 int s=Integer.parseInt(maggi.getText().toString().trim());
                 s--;
                 if(s<0){
-                    Toast.makeText(MainActivity.this, "Sorry Not less than 0", Toast.LENGTH_SHORT).show();   maggi.setText("0");
+                    FancyToast.makeText(MainActivity.this, "Sorry Not less than 0", FancyToast.LENGTH_SHORT, FancyToast.ERROR,false ).show();   maggi.setText("0");
                 }else {
                     maggi.setText(""+s);
                 }
@@ -338,38 +397,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
+
     private void payamt(int total) {
         String amount = ""+total;
         try{
         Uri uri = Uri.parse("upi://pay?pa="+payeeAddress+"&pn="+payeeName+"&tn="+transactionNote+
                 "&am="+amount+"&cu="+currencyUnit);
-        Log.d(TAG, "onClick: uri: "+uri);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivityForResult(intent,1);}catch (Exception e){
-        Toast.makeText(MainActivity.this, "Sorry! Please Install GPAY or BHIM", Toast.LENGTH_SHORT).show();e.printStackTrace();
+            FancyToast.makeText(this, "PAYMENT", FancyToast.LENGTH_SHORT, FancyToast.WARNING,false ).show();
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivityForResult(intent,1);}
+        catch (Exception e){
+            FancyToast.makeText(this,"Sorry! Please Install GPAY or BHIM",FancyToast.LENGTH_LONG, FancyToast.ERROR,false ).show();
     }}
 
-    void sendwhatsapp(String number,String text) {
-        PackageManager pm=getPackageManager();
-        try {
-            PackageInfo info=pm.getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
-            Uri uri = Uri.parse("smsto:" + number);
-            Intent i = new Intent(Intent.ACTION_SENDTO, uri);
-            i.setPackage("com.whatsapp");
-            i.putExtra(Intent.EXTRA_TEXT, text);
-            i.setType("text/plain");
-            startActivity(Intent.createChooser(i, "Share"));
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "WhatsApp not Installed", Toast.LENGTH_SHORT)
-                    .show();
-            try{
-            Uri uri = Uri.parse("market://details?id=com.whatsapp");
-            Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
-            startActivity(goToMarket);}catch (Exception e1){e1.printStackTrace();
-                Toast.makeText(this, "FAILED wahtsapp", Toast.LENGTH_SHORT).show();}
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -385,15 +427,46 @@ public class MainActivity extends AppCompatActivity {
             String res = data.getStringExtra("response");
             String search = "SUCCESS";
             if (res.toLowerCase().contains(search.toLowerCase())) {
-                Toast.makeText(this, "Payment Successful", Toast.LENGTH_SHORT).show();
-                Toast.makeText(this, "HOSTEL "+hostel+" Room No.: "+room+" DATE: "+currentTime +" Payment DONE txnID: "+ requestCode, Toast.LENGTH_SHORT).show();
-                sendwhatsapp("6204553564","HOSTEL "+hostel+" Room No.: "+room+" DATE: "+currentTime +" Payment DONE txnID: "+ requestCode);
+                    FancyToast.makeText(this,"Payment Successful !",FancyToast.LENGTH_LONG, FancyToast.SUCCESS,false ).show();
+                FancyToast.makeText(this,"HOSTEL "+hostel+" Room No.: "+room+" DATE: "+currentTime +" Payment DONE txnID: "+ requestCode,FancyToast.LENGTH_LONG, FancyToast.SUCCESS,false ).show();
+                String txt2img=
+                        "Name :"+name +
+                        "\nHOSTEL :"+hostel+
+                        "\n Room No.: "+room+
+                        "\n Contact Number:"+number+
+                        "\n Total Price. Paid :"+total+
+                        "\n \n Ordered :"+order +
+                        "\n \n DATE: "+currentTime +
+                        "\n txnID: "+ requestCode;
+                whatsapp(MainActivity.this,"+919669615449",txt2img);
             } else {
-                Toast.makeText(this, "Payment Failed", Toast.LENGTH_SHORT).show();
+                FancyToast.makeText(this,"Payment Failed",FancyToast.LENGTH_LONG, FancyToast.ERROR,false ).show();
+
             }
         }
 
     }
+    @SuppressLint("NewApi")
+    public void whatsapp(Activity activity, String phone,String txt) {
+
+        PackageManager packageManager = getApplicationContext().getPackageManager();
+
+
+        try {
+            String url = "https://api.whatsapp.com/send?phone="+ "+919669615449" +"&text=" + URLEncoder.encode(txt, "UTF-8");
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setPackage("com.whatsapp");
+            i.putExtra(Intent.EXTRA_TEXT," Sharing ");
+            i.setType("text/plain");
+            i.setData(Uri.parse(url));
+
+            startActivity(i);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void showDialog(final Activity activity) {
 
         final Dialog dialog = new Dialog(activity);
@@ -401,10 +474,23 @@ public class MainActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.newcustom_layout);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        final EditText hostelis=dialog.findViewById(R.id.hostel);
+        dialog.getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        //final EditText hostelis=dialog.findViewById(R.id.hostel);
         final EditText roomis=dialog.findViewById(R.id.room);
+        final EditText numberis=dialog.findViewById(R.id.number);
+        final EditText nameis=dialog.findViewById(R.id.name);
         final TextView price=dialog.findViewById(R.id.price);
+       final Spinner niceSpinner = dialog.findViewById(R.id.hostel);
+        String[] arraySpinner = new String[] {
+                "BARAK", "BRAHMAPUTRA", "DHANSIRI", "DIBANG", "DIHING","KAMENG","KAPILI","LOHIT", "MANAS", "SIANG", "SUBHANSIRI","UMIAM"
+        };
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, arraySpinner);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        niceSpinner.setAdapter(adapter);
         price.setText(""+total);
+
 
         Button cancel = dialog.findViewById(R.id.retry);
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -418,18 +504,61 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 room=roomis.getText().toString().trim();
-               hostel=hostelis.getText().toString().trim();
+                name=nameis.getText().toString().trim();
+                number=numberis.getText().toString().trim();
+               hostel=niceSpinner.getSelectedItem().toString().trim();
 
-             if((!TextUtils.isEmpty(room)) && (hostel.equals("SIANG") || hostel.equals("BARAK") ||hostel.equals("BRAHMAPUTRA") ||hostel.equals("DHANSIRI") ||hostel.equals("DIBANG") ||hostel.equals("DIHING") || hostel.equals("KAMENG")|| hostel.equals("KAPILI") || hostel.equals("LOHIT") || hostel.equals("MANAS") || hostel.equals("SUBHANSIRI") || hostel.equals("UMIAM" )))
-             {dialog.cancel();payamt(total);}
+             if(!TextUtils.isEmpty(room) && !TextUtils.isEmpty(name) && !TextUtils.isEmpty(number) && number.length()==10 )
+             {dialog.cancel();
+                cnfrmDialog(dialog.getContext());
+
+             }
              else{
-                 hostelis.setError("Write Correct");
+                 if(TextUtils.isEmpty(name))
+                 nameis.setError("Write Correct");
+                 if(TextUtils.isEmpty(number) || number.length()!=10)
+                 numberis.setError("Write Correct");
+                 if(TextUtils.isEmpty(room))
+                 roomis.setError("Write Correct");
+                 FancyToast.makeText(activity,"Wrtie Room No. and Select Hostel !",FancyToast.LENGTH_LONG, FancyToast.ERROR,false ).show();
 
-                 Toast.makeText(activity, "Wrtie Room No. and Hostel eg. SIANG , BRAHMAPUTRA", Toast.LENGTH_SHORT).show();
              }
             }
         });
             dialog.show();
+    }
+    public void cnfrmDialog(Context context) {
+
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialogcnfrm);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+        final TextView orderis=dialog.findViewById(R.id.order);
+        final TextView price=dialog.findViewById(R.id.price);
+        price.setText(""+total);
+        orderis.setText(order);
+        Button cancel = dialog.findViewById(R.id.retry);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+
+            }
+        });
+        Button ok = dialog.findViewById(R.id.ok);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+                payamt(total);
+
+            }
+        });
+        dialog.show();
     }
 
     @Override
@@ -456,7 +585,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_about:{
                 Intent i=new Intent(this, About.class);
                 startActivity(i);
-            } return true;
+            } return false;
 
         }
 

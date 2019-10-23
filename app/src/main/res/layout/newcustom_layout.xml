@@ -58,14 +58,12 @@
                     android:text="Hostel"
                     android:layout_margin="8dp"
                     android:layout_height="wrap_content"/>
-                    <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_margin="8dp"
-                        android:textSize="18sp"
-                        android:hint="Change This"
+                    <Spinner
                         android:id="@+id/hostel"
-                        android:textAllCaps="true"
-                        android:layout_height="wrap_content"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"/>
+
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -85,9 +83,63 @@
                         android:layout_width="wrap_content"
                         android:layout_margin="8dp"
                         android:textSize="18sp"
+                        android:textCursorDrawable="@null"
                         android:hint="Change This"
                         android:id="@+id/room"
-                        android:textAllCaps="true"
+                        android:maxEms="13"
+
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"
+                        android:typeface="serif"
+                        android:text="Contact No."
+                        android:layout_margin="8dp"
+                        android:layout_height="wrap_content"/>
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_margin="8dp"
+                        android:textSize="18sp"
+                        android:inputType="number"
+
+                        android:maxEms="10"
+                        android:textCursorDrawable="@null"
+                        android:hint="Change This"
+                        android:id="@+id/number"
+
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"
+                        android:typeface="serif"
+                        android:text="Name"
+                        android:layout_margin="8dp"
+                        android:layout_height="wrap_content"/>
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_margin="8dp"
+                        android:inputType="textPersonName"
+                        android:textSize="18sp"
+                        android:hint="Change This"
+                        android:textCursorDrawable="@null"
+                        android:id="@+id/name"
+
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
                 <LinearLayout

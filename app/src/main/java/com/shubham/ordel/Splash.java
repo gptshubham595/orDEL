@@ -13,12 +13,10 @@ public class Splash extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        final MediaPlayer mp = MediaPlayer.create(this, R.raw.surprise);
-        mp.start();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mp.release();
                 Intent i=new Intent(getApplicationContext(), Pizza.class);
                 startActivity(i);
             }
